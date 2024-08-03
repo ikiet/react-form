@@ -11,6 +11,7 @@ export default function Signup() {
 
     console.log(data);
 
+    event.target.reset();
   }
   return (
     <form onSubmit={onFormSubmit}>
