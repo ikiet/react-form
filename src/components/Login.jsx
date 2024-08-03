@@ -49,6 +49,7 @@ export default function Login() {
             value={email}
             onChange={onEmailChange}
             onBlur={onEmailInputBlur}
+            required
             onFocus={() => setEmailInvalid(false)}
           />
           <div className="control-error">
@@ -65,6 +66,8 @@ export default function Login() {
             value={password}
             onChange={onPasswordChange}
             onBlur={onPasswordInputBlur}
+            required
+            minLength={6}
             onFocus={() => setPasswordInvalid(false)}
           />
           <div className="control-error">
