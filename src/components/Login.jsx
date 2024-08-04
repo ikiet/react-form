@@ -1,45 +1,37 @@
-import { useState } from "react";
 import Input from "./Input";
 import { isEmail, isNotEmpty } from "../util/validation";
+import useInput from "../hooks/useInput";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const [emailErrorMessage, setEmailErrorMessage] = useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState(false);
-
-  const onEmailChange = (event) => {
-    const newValue = event.target.value;
-    setEmail(newValue);
-  };
-
-  const onEmailInputBlur = (event) => {
-    const newEmail = event.target.value;
-    if (!isNotEmpty(newEmail)) {
-      setEmailErrorMessage("Email is required");
-    } else if (!isEmail(newEmail)) {
-      setEmailErrorMessage("Invalid email address");
+  const {
+    value: email,
+    errorMessage: emailErrorMessage,
+    onChange: onEmailChange,
+    onBlur: onEmailBlur,
+    onFocus: onEmailFocus,
+  } = useInput("", (value) => {
+    if (!isNotEmpty(value)) {
+      return "Enter email!";
+    } else if (!isEmail(value)) {
+      return "Enter valid email!";
     }
-  };
+  });
 
-  const onPasswordChange = (event) => {
-    const newValue = event.target.value;
-    setPassword(newValue);
-  };
-
-  const onPasswordInputBlur = (event) => {
-    const newPassword = event.target.value;
-    if (!isNotEmpty(newPassword)) {
-      setPasswordErrorMessage("Password is required");
+  const {
+    value: password,
+    errorMessage: passwordErrorMessage,
+    onChange: onPasswordChange,
+    onBlur: onPasswordBlur,
+    onFocus: onPasswordFocus,
+  } = useInput("", (value) => {
+    if (!isNotEmpty(value)) {
+      return "Enter password!";
     }
-  };
+  });
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    setEmailErrorMessage(!email.includes("@"));
-    setPasswordErrorMessage(password == "");
     if (emailErrorMessage || passwordErrorMessage) {
       return;
     }
@@ -59,9 +51,9 @@ export default function Login() {
           name="email"
           value={email}
           onChange={onEmailChange}
-          onBlur={onEmailInputBlur}
+          onBlur={(event) => onEmailBlur(event.target.value)}
           required
-          onFocus={() => setEmailErrorMessage(false)}
+          onFocus={onEmailFocus}
           errorMessage={emailErrorMessage}
         />
         <Input
@@ -71,17 +63,25 @@ export default function Login() {
           name="password"
           value={password}
           onChange={onPasswordChange}
-          onBlur={onPasswordInputBlur}
+          onBlur={(event) => onPasswordBlur(event.target.value)}
           required
           minLength={6}
-          onFocus={() => setPasswordErrorMessage(false)}
+          onFocus={onPasswordFocus}
           errorMessage={passwordErrorMessage}
         />
       </div>
 
       <p className="form-actions">
         <button className="button button-flat">Reset</button>
-        <button className="button">Login</button>
+        <button
+          className="button"
+          onClick={() => {
+            onEmailBlur(email);
+            onPasswordBlur(password);
+          }}
+        >
+          Login
+        </button>
       </p>
     </form>
   );
