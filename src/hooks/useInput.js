@@ -18,11 +18,17 @@ export default (initialValue, onValidate) => {
     setErrorMessage(null);
   };
 
+  const onReset = () => {
+    setEnteredValue(initialValue);
+    setErrorMessage(null);
+  };
+
   return {
     value: enteredValue,
     errorMessage,
     onChange,
     onBlur,
     onFocus,
+    onReset,
   };
 };

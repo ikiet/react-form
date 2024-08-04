@@ -9,6 +9,7 @@ export default function Login() {
     onChange: onEmailChange,
     onBlur: onEmailBlur,
     onFocus: onEmailFocus,
+    onReset: onEmailReset,
   } = useInput("", (value) => {
     if (!isNotEmpty(value)) {
       return "Enter email!";
@@ -23,6 +24,7 @@ export default function Login() {
     onChange: onPasswordChange,
     onBlur: onPasswordBlur,
     onFocus: onPasswordFocus,
+    onReset: onPasswordReset,
   } = useInput("", (value) => {
     if (!isNotEmpty(value)) {
       return "Enter password!";
@@ -37,6 +39,11 @@ export default function Login() {
     }
     console.log("Email:", email);
     console.log("Password:", password);
+  };
+
+  const onReset = () => {
+    onEmailReset();
+    onPasswordReset();
   };
 
   return (
@@ -72,7 +79,9 @@ export default function Login() {
       </div>
 
       <p className="form-actions">
-        <button className="button button-flat">Reset</button>
+        <button onClick={onReset} type="reset" className="button button-flat">
+          Reset
+        </button>
         <button
           className="button"
           onClick={() => {
