@@ -1,11 +1,13 @@
 import { useState } from "react";
+import Input from "./Input";
+import { isEmail, isNotEmpty } from "../util/validation";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [isEmailInvalid, setEmailInvalid] = useState(false);
-  const [isPasswordInvalid, setPasswordInvalid] = useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState(false);
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState(false);
 
   const onEmailChange = (event) => {
     const newValue = event.target.value;
@@ -13,7 +15,12 @@ export default function Login() {
   };
 
   const onEmailInputBlur = (event) => {
-    setEmailInvalid(!event.target.value.includes("@"));
+    const newEmail = event.target.value;
+    if (!isNotEmpty(newEmail)) {
+      setEmailErrorMessage("Email is required");
+    } else if (!isEmail(newEmail)) {
+      setEmailErrorMessage("Invalid email address");
+    }
   };
 
   const onPasswordChange = (event) => {
@@ -22,17 +29,22 @@ export default function Login() {
   };
 
   const onPasswordInputBlur = (event) => {
-    setPasswordInvalid(event.target.value == "");
+    const newPassword = event.target.value;
+    if (!isNotEmpty(newPassword)) {
+      setPasswordErrorMessage("Password is required");
+    }
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    setEmailInvalid(!email.includes("@"));
-    setPasswordInvalid(password == "");
-    if (isEmailInvalid || isPasswordInvalid) {
+    setEmailErrorMessage(!email.includes("@"));
+    setPasswordErrorMessage(password == "");
+    if (emailErrorMessage || passwordErrorMessage) {
       return;
     }
+    console.log("Email:", email);
+    console.log("Password:", password);
   };
 
   return (
@@ -40,40 +52,31 @@ export default function Login() {
       <h2>Login</h2>
 
       <div className="control-row">
-        <div className="control no-margin">
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            value={email}
-            onChange={onEmailChange}
-            onBlur={onEmailInputBlur}
-            required
-            onFocus={() => setEmailInvalid(false)}
-          />
-          <div className="control-error">
-            {isEmailInvalid && <p>Please enter a valid email address.</p>}
-          </div>
-        </div>
-
-        <div className="control no-margin">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            name="password"
-            value={password}
-            onChange={onPasswordChange}
-            onBlur={onPasswordInputBlur}
-            required
-            minLength={6}
-            onFocus={() => setPasswordInvalid(false)}
-          />
-          <div className="control-error">
-            {isPasswordInvalid && <p>Please enter a valid password.</p>}
-          </div>
-        </div>
+        <Input
+          label="Email"
+          id="email"
+          type="email"
+          name="email"
+          value={email}
+          onChange={onEmailChange}
+          onBlur={onEmailInputBlur}
+          required
+          onFocus={() => setEmailErrorMessage(false)}
+          errorMessage={emailErrorMessage}
+        />
+        <Input
+          label="Password"
+          id="password"
+          type="password"
+          name="password"
+          value={password}
+          onChange={onPasswordChange}
+          onBlur={onPasswordInputBlur}
+          required
+          minLength={6}
+          onFocus={() => setPasswordErrorMessage(false)}
+          errorMessage={passwordErrorMessage}
+        />
       </div>
 
       <p className="form-actions">
